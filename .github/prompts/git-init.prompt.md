@@ -27,7 +27,7 @@ description: Check the Git repository, create or update .gitignore and show the 
 ## Перевірки
 ```bash
 git rev-parse --is-inside-work-tree        # -> true
-git check-ignore -q build/ node_modules/ coverage/ .env && echo ignored
+git check-ignore -v build/ node_modules/ coverage/ .env   # -> 4 рядки, по одному на шлях
 git status --short --branch
 ```
 
