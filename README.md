@@ -1,13 +1,5 @@
 # Лабораторна робота № 1 — AI-агент build-engineer
 
-**Студент:** Овчаренко Нікіта Андрійович, група КІ-404
-**Викладач:** Чапля О. Ю.
-**Варіант:** 15 → 3 (6 варіантів, циклічно: ((15 − 1) mod 6) + 1 = 3)
-
-| Мова | Система складання / запуску | Тестування |
-|---|---|---|
-| JavaScript (Node.js) | npm scripts | Jest |
-
 ## Опис
 Репозиторій містить AI-агента **build-engineer**, який за вимогами варіанта
 створює мінімальний кросплатформний проєкт Hello World на JavaScript, систему
@@ -22,7 +14,6 @@ Windows, Linux і macOS, а потім перевіряє результат.
 | Перевірка | [`.github/agent-tools/check.js`](.github/agent-tools/check.js) |
 | Архітектура | [`docs/architecture.md`](docs/architecture.md) |
 | Інструкція запуску | [`docs/usage.md`](docs/usage.md) |
-| Журнал AI | [`docs/ai-log.md`](docs/ai-log.md) |
 
 ## Гілки
 - `develop` — лише агент з інструкціями;
