@@ -33,3 +33,21 @@ node .github/agent-tools/check.js --static # лише структура (без
 ```
 У гілці `develop` (до `/init-all`) групи `project`, `workflow`, `build`, `tests`
 очікувано мають `FAIL` — проєкт ще не згенеровано.
+
+<!-- agent:build:start -->
+## Складання, запуск і тестування проєкту
+
+```bash
+npm ci                 # встановити залежності точно за package-lock.json
+npm run build          # зібрати: build/lib/*.js, build/hello, build/hello.cmd
+./build/hello          # запустити на Linux/macOS   -> Hello, World!
+build\hello.cmd        # запустити на Windows       -> Hello, World!
+npm start -- Nikita    # запустити через npm        -> Hello, Nikita!
+npm test               # юніт-тести Jest (серед них BasicAddition)
+npm run check          # перевірка агента і проєкту, exit code 0 = PASS
+npm run clean          # видалити build/ і coverage/
+```
+
+Ті самі кроки, що виконує GitHub Actions, можна запустити локально: `./ci.sh`
+(Linux/macOS) або `ci.bat` (Windows).
+<!-- agent:build:end -->

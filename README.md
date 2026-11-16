@@ -14,6 +14,7 @@ Windows, Linux і macOS, а потім перевіряє результат.
 | Перевірка | [`.github/agent-tools/check.js`](.github/agent-tools/check.js) |
 | Архітектура | [`docs/architecture.md`](docs/architecture.md) |
 | Інструкція запуску | [`docs/usage.md`](docs/usage.md) |
+| Докази перевірки | [`docs/verification.md`](docs/verification.md) |
 
 ## Гілки
 - `develop` — лише агент з інструкціями;
@@ -28,3 +29,22 @@ Windows, Linux і macOS, а потім перевіряє результат.
 
 Окремі кроки: `/git-init`, `/create-project`, `/create-build`, `/create-actions`, `/check`.
 Детально — у [`docs/usage.md`](docs/usage.md).
+
+<!-- agent:project:start -->
+## Проєкт hello-world-js
+
+Кросплатформний консольний застосунок Hello World на JavaScript (Node.js).
+
+| Що | Команда |
+|---|---|
+| Встановити залежності | `npm ci` |
+| Зібрати | `npm run build` → `build/hello`, `build/hello.cmd` |
+| Запустити зібраний файл | Linux/macOS: `./build/hello`; Windows: `build\hello.cmd`; будь-яка ОС: `npm start` |
+| Запустити без складання | `node src/hello.js [ім'я]` |
+| Юніт-тести (Jest) | `npm test` |
+| Повна перевірка | `npm run check` |
+| CI локально | `./ci.sh` (Linux/macOS), `ci.bat` (Windows) |
+
+Вихідний код лежить у `src/`, тести Jest — у `tests/`, скрипти складання — у
+`scripts/`, а workflow GitHub Actions — у `.github/workflows/ci.yml`.
+<!-- agent:project:end -->
