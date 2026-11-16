@@ -8,7 +8,7 @@
 | Виконуваний файл | `./build/hello` | `Hello, World!` |
 | Юніт-тести | `npm test` | 6 passed, `BasicAddition` passed |
 | CI-скрипт | `./ci.sh` | `ci: OK` |
-| Ідемпотентність | повторний `/init` + порівняння SHA-256 | жоден файл не змінився |
+| Ідемпотентність | повторний `/init-all` + порівняння SHA-256 | жоден файл не змінився |
 | Зламана перевірка | `add()` повертає `a + b + 1` | `check` FAIL для `BasicAddition`, exit code 1 |
 | Git | `git status --ignored` | `build/`, `node_modules/` — ignored, не під Git |
 
