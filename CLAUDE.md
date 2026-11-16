@@ -6,6 +6,6 @@ The agent is defined in the GitHub Copilot format; Claude Code uses the same fil
 - manifest: `.github/agents/build-engineer.agent.md` — read it before any command and follow its rules;
 - skills: `.github/skills/*/SKILL.md` (specifications: requirements and checks, no ready-made files);
 - commands: `.github/prompts/*.prompt.md`, exposed as `/git-init`, `/create-project`, `/create-build`,
-  `/create-actions`, `/check`, `/init` through the thin wrappers in `.claude/commands/`.
+  `/create-actions`, `/check`, `/init-all` through the thin wrappers in `.claude/commands/`.
 
 Never commit, push, rewrite history or delete files outside `build/` / `coverage/` without explicit permission.

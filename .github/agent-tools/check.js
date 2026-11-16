@@ -89,14 +89,14 @@ for (const skill of ['project-scaffold', 'build-and-test', 'github-actions']) {
 // ---------------------------------------------------------------- commands
 const commandSections = ['Передумови', 'Дії', 'Очікувані файли', 'Перевірки',
   'Повідомлення про помилку'];
-const commands = ['git-init', 'create-project', 'create-build', 'create-actions', 'check', 'init'];
+const commands = ['git-init', 'create-project', 'create-build', 'create-actions', 'check', 'init-all'];
 for (const cmd of commands) {
   const file = `.github/prompts/${cmd}.prompt.md`;
   check('commands', `${cmd}: preconditions, actions, files, checks, error message`, () =>
     hasSections(file, commandSections));
 }
-check('commands', 'init calls git-init -> create-project -> create-build -> create-actions -> check', () => {
-  const text = read('.github/prompts/init.prompt.md');
+check('commands', 'init-all calls git-init -> create-project -> create-build -> create-actions -> check', () => {
+  const text = read('.github/prompts/init-all.prompt.md');
   const steps = text.split(/^##\s+Дії/m)[1] || '';
   const order = commands.slice(0, 5).map((c) => steps.indexOf(`/${c}`));
   if (order.some((i) => i < 0)) return 'not every command is referenced in "Дії"';

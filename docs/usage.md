@@ -5,7 +5,7 @@
 ### VS Code + GitHub Copilot
 1. `code .` у корені репозиторію (гілка `develop` — лише агент).
 2. Copilot Chat → у списку агентів вибрати **build-engineer**.
-3. Ввести `/init` — оркестратор виконає `/git-init` → `/create-project` →
+3. Ввести `/init-all` — оркестратор виконає `/git-init` → `/create-project` →
    `/create-build` → `/create-actions` → `/check`.
 4. Переглянути зміни (Source Control), закомітити у гілку `feature/...`.
 
@@ -13,7 +13,7 @@
 ```bash
 git switch -c feature/hello-world-js develop
 claude            # у корені репозиторію
-> /init
+> /init-all
 ```
 
 ### Окремі команди
@@ -31,7 +31,7 @@ npm ci
 node .github/agent-tools/check.js          # повна перевірка, exit code 0 = PASS
 node .github/agent-tools/check.js --static # лише структура (без складання і тестів)
 ```
-У гілці `develop` (до `/init`) групи `project`, `workflow`, `build`, `tests`
+У гілці `develop` (до `/init-all`) групи `project`, `workflow`, `build`, `tests`
 очікувано мають `FAIL` — проєкт ще не згенеровано.
 
 <!-- agent:build:start -->
