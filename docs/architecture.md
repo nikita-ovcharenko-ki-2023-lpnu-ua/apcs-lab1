@@ -2,7 +2,7 @@
 
 ## Яку задачу вирішує агент
 Перетворює вимоги варіанта 3 (JavaScript + npm scripts + Jest, CI для трьох ОС)
-на відтворюваний процес: запуск `/init` у репозиторії з самим агентом генерує
+на відтворюваний процес: запуск `/init-all` у репозиторії з самим агентом генерує
 проєкт за специфікаціями skills (розділ «Вимоги»), а `/check` об'єктивно
 підтверджує або спростовує, що результат цим вимогам відповідає. Skills не
 містять готових файлів — код, конфігурації й тести агент пише сам.
@@ -23,7 +23,7 @@
 | Command | `.github/prompts/create-build.prompt.md` | викликає build-and-test |
 | Command | `.github/prompts/create-actions.prompt.md` | викликає github-actions |
 | Command | `.github/prompts/check.prompt.md` | лише перевірка (read-only) |
-| Orchestrator | `.github/prompts/init.prompt.md` | 1→5, зупинка на першій помилці |
+| Orchestrator | `.github/prompts/init-all.prompt.md` | 1→5, зупинка на першій помилці |
 | Tool | `.github/agent-tools/check.js` | детермінована перевірка для `/check` (exit 0/1) |
 
 Skill відповідає на питання **«як»** (вимоги до файлів і способи перевірки), command —
@@ -33,7 +33,7 @@ Skill відповідає на питання **«як»** (вимоги до �
 ```mermaid
 flowchart LR
     M[build-engineer.agent.md<br/>manifest] -.правила.-> I
-    I["/init<br/>orchestrator"] --> G["/git-init"]
+    I["/init-all<br/>orchestrator"] --> G["/git-init"]
     G --> P["/create-project"] --> B["/create-build"] --> A["/create-actions"] --> C["/check"]
     P --uses--> S1[[project-scaffold]]
     B --uses--> S2[[build-and-test]]
@@ -49,14 +49,14 @@ flowchart LR
 | create-project | `src/hello.js` (функції `greet`, `main`), каталоги `tests/`, `scripts/` |
 | create-build | `package.json` зі скриптами `build`/`test`, `node_modules/`, `package-lock.json`, зелені тести |
 | create-actions | `ci.sh`/`ci.bat`, що викликають ті самі npm scripts; `ci.yml` |
-| check | таблиця PASS/FAIL і код виходу → підсумок `/init` |
+| check | таблиця PASS/FAIL і код виходу → підсумок `/init-all` |
 
 Параметри (`projectName`, `testName`, `branches`, `nodeVersion`) задаються в
-таблиці `/init` і передаються командам як `key=value`.
+таблиці `/init-all` і передаються командам як `key=value`.
 
 ## Обробка помилок оркестратором
 1. Кожна command має розділ «Перевірки»; оркестратор виконує їх після кроку.
-2. Перший `FAIL` → зупинка: `init: STOPPED at step n/5 (<command>) — <причина>`.
+2. Перший `FAIL` → зупинка: `init-all: STOPPED at step n/5 (<command>) — <причина>`.
    Наступні кроки не виконуються, бо залежать від попередніх (наприклад,
    `create-actions` без робочого `npm test` створив би «зелений» лише на папері CI).
 3. Заборонено маскувати помилки (`|| true`, `test.skip`, видалення перевірок).
@@ -75,6 +75,7 @@ flowchart LR
 | `.github/skills/*/SKILL.md` | так само | Agent Skills; лише специфікації (вимоги, перевірки), без готових файлів |
 | `CMakeLists.txt` | `package.json` + `scripts/build.js` | варіант 3: npm scripts замість CMake |
 | — | `.github/agent-tools/check.js` | додано: детермінована частина `/check` |
+| `init.prompt.md` (`/init`) | `init-all.prompt.md` (`/init-all`) | перейменовано: і Copilot Chat у VS Code, і Claude Code мають вбудовану команду `/init` (генерує `.github/copilot-instructions.md` / `CLAUDE.md`), яка перекриває однойменний prompt-файл; функція оркестратора не змінилась |
 | — | `CLAUDE.md`, `.claude/commands/*.md` | додано: ті самі команди для Claude Code, тонкі обгортки над `.github/prompts/` |
 
 Агентські файли згенеровано за допомогою Claude Code (модель Claude Opus 5.5),

@@ -50,7 +50,7 @@ Windows, Linux та macOS.
 | `/create-build` | `.github/prompts/create-build.prompt.md` | застосувати skill build-and-test |
 | `/create-actions` | `.github/prompts/create-actions.prompt.md` | застосувати skill github-actions |
 | `/check` | `.github/prompts/check.prompt.md` | лише перевірка, без змін у проєкті |
-| `/init` | `.github/prompts/init.prompt.md` | оркестратор: git-init → create-project → create-build → create-actions → check |
+| `/init-all` | `.github/prompts/init-all.prompt.md` | оркестратор: git-init → create-project → create-build → create-actions → check |
 
 ## Правила роботи з файлами
 1. **Ідемпотентність.** Перед створенням файлу перевір, чи він існує.
@@ -101,4 +101,4 @@ Windows, Linux та macOS.
 - [ ] `.github/workflows/ci.yml` — валідний YAML, тригери `push` і `pull_request` на `develop` і `master`, matrix з трьох ОС, кроки викликають лише `ci.sh` / `ci.bat`;
 - [ ] `.gitignore` містить `node_modules/`, `build/`, `coverage/`, `.env`; `git ls-files` не містить цих шляхів і секретів;
 - [ ] `node .github/agent-tools/check.js` завершується з кодом 0;
-- [ ] повторний запуск `/init` не змінює жодного файлу (`git status` чистий).
+- [ ] повторний запуск `/init-all` не змінює жодного файлу (`git status` чистий).
