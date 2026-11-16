@@ -2,8 +2,10 @@
 
 ## Яку задачу вирішує агент
 Перетворює вимоги варіанта 3 (JavaScript + npm scripts + Jest, CI для трьох ОС)
-на відтворюваний процес: однаковий запуск `/init` у чистому репозиторії дає
-однаковий проєкт, а `/check` об'єктивно підтверджує або спростовує результат.
+на відтворюваний процес: запуск `/init` у репозиторії з самим агентом генерує
+проєкт за специфікаціями skills (розділ «Вимоги»), а `/check` об'єктивно
+підтверджує або спростовує, що результат цим вимогам відповідає. Skills не
+містять готових файлів — код, конфігурації й тести агент пише сам.
 Агент прибирає ручну рутину (каркас, `package.json`, тести, workflow), але не
 приймає рішень, що можуть зашкодити: без дозволу не комітить, не пушить, не
 видаляє файли поза `build/`.
@@ -24,7 +26,7 @@
 | Orchestrator | `.github/prompts/init.prompt.md` | 1→5, зупинка на першій помилці |
 | Tool | `.github/agent-tools/check.js` | детермінована перевірка для `/check` (exit 0/1) |
 
-Skill відповідає на питання **«як»** (знання + шаблони в `templates/`), command —
+Skill відповідає на питання **«як»** (вимоги до файлів і способи перевірки), command —
 **«що і коли»** (передумови, дії, очікувані файли, перевірки, повідомлення про
 помилку), orchestrator — **«в якому порядку»**.
 
@@ -70,7 +72,7 @@ flowchart LR
 |---|---|---|
 | `.github/agents/build-engineer.agent.md` | так само | custom agent Copilot (frontmatter `name`, `description`, `tools`) |
 | `.github/prompts/*.prompt.md` | так само | prompt files, запуск `/<назва>` у Copilot Chat; `agent: build-engineer` |
-| `.github/skills/*/SKILL.md` | так само + `templates/` | Agent Skills; шаблони — еталонні файли для відтворюваності |
+| `.github/skills/*/SKILL.md` | так само | Agent Skills; лише специфікації (вимоги, перевірки), без готових файлів |
 | `CMakeLists.txt` | `package.json` + `scripts/build.js` | варіант 3: npm scripts замість CMake |
 | — | `.github/agent-tools/check.js` | додано: детермінована частина `/check` |
 | — | `CLAUDE.md`, `.claude/commands/*.md` | додано: ті самі команди для Claude Code, тонкі обгортки над `.github/prompts/` |

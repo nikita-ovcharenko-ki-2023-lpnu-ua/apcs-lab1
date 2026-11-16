@@ -71,12 +71,17 @@ check('agent', 'manifest frontmatter has name and description', () => {
 });
 
 // ---------------------------------------------------------------- skills
-const skillSections = ['Коли застосовувати', 'Входи', 'Виходи', 'Перевірки',
+const skillSections = ['Коли застосовувати', 'Входи', 'Виходи', 'Вимоги', 'Перевірки',
   'Типовий сценарій помилки', 'Приклад'];
 for (const skill of ['project-scaffold', 'build-and-test', 'github-actions']) {
   const file = `.github/skills/${skill}/SKILL.md`;
-  check('skills', `${skill}: purpose, inputs, outputs, checks, failure, example`, () =>
+  check('skills', `${skill}: purpose, inputs, outputs, requirements, checks, failure, example`, () =>
     hasSections(file, skillSections));
+  check('skills', `${skill}: specification only, no ready-made file templates`, () => {
+    const dir = rel(`.github/skills/${skill}`);
+    const extra = fs.existsSync(dir) ? fs.readdirSync(dir).filter((f) => f !== 'SKILL.md') : [];
+    return extra.length ? `unexpected files: ${extra.join(', ')}` : true;
+  });
   check('skills', `${skill}: frontmatter name matches directory`, () =>
     frontmatter(file).name === skill ? true : `name != ${skill}`);
 }
@@ -101,7 +106,7 @@ check('commands', 'init calls git-init -> create-project -> create-build -> crea
 // ---------------------------------------------------------------- project
 for (const f of ['README.md', 'src/hello.js', 'src/math.js', 'tests/math.test.js',
   'package.json', 'package-lock.json', 'jest.config.js', 'scripts/build.js',
-  'ci.sh', 'ci.bat', 'docs/architecture.md', 'docs/usage.md', 'docs/ai-log.md']) {
+  'ci.sh', 'ci.bat', 'docs/architecture.md', 'docs/usage.md']) {
   check('project', `${f} exists`, () => exists(f) || 'not found');
 }
 check('project', 'package.json has build/start/test/check scripts and jest', () => {

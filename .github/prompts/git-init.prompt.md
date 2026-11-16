@@ -13,8 +13,8 @@ description: Check the Git repository, create or update .gitignore and show the 
 ## Дії
 1. Показати `git --version`, поточну гілку, `git remote -v`, `git config user.name`.
 2. Перевірити `.gitignore`: дописати відсутні обов'язкові рядки
-   `node_modules/`, `build/`, `coverage/`, `.env` (повний набір — у
-   `.github/skills/project-scaffold/templates/gitignore`). Існуючі рядки не змінювати, не дублювати.
+   `node_modules/`, `build/`, `coverage/`, `.env` (повний перелік — розділ «Вимоги»
+   skill project-scaffold). Існуючі рядки не змінювати, не дублювати.
 3. Перевірити `.gitattributes`: `*.sh text eol=lf`, `*.bat text eol=crlf` (дописати відсутні).
 4. Перевірити, що під Git немає тимчасових файлів і секретів:
    `git ls-files | grep -E '^(build|node_modules|coverage)/|\.env'` — має бути порожньо.

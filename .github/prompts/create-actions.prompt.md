@@ -13,10 +13,11 @@ argument-hint: branches=develop,master nodeVersion=24
 - Встановлено devDependency `js-yaml` (для перевірки YAML).
 
 ## Дії
-1. Створити `ci.sh` (755, LF) і `ci.bat` (CRLF) з шаблонів skill.
-2. Створити `.github/workflows/ci.yml`; якщо файл існує — порівняти, не дублювати job.
-3. Запустити `./ci.sh` (Linux/macOS) або `ci.bat` (Windows) локально.
-4. Дописати запис у `docs/ai-log.md`.
+1. Визначити актуальні мажорні версії `actions/checkout`, `actions/setup-node`,
+   `actions/upload-artifact` (`gh api repos/actions/<name>/releases/latest`).
+2. Написати за вимогами skill `ci.sh` (755, LF) і `ci.bat` (CRLF).
+3. Написати `.github/workflows/ci.yml`; якщо файл існує — перевірити вимоги, не дублювати job.
+4. Запустити `./ci.sh` (Linux/macOS) або `ci.bat` (Windows) локально.
 
 ## Очікувані файли
 - `ci.sh`, `ci.bat`, `.github/workflows/ci.yml`

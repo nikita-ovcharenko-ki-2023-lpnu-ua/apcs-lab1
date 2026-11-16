@@ -1,9 +1,12 @@
 ---
 name: github-actions
-description: Creates the CI entry scripts ci.sh / ci.bat and .github/workflows/ci.yml with a Windows, Linux and macOS matrix that only calls those scripts and uploads the built executable. Use after build-and-test or when /create-actions is run.
+description: Generates the CI entry scripts ci.sh / ci.bat and .github/workflows/ci.yml with a Windows, Linux and macOS matrix that only calls those scripts and uploads the built executable, following a specification. Use after build-and-test or when /create-actions is run.
 ---
 
 # Skill: github-actions
+
+Skill не містить готових файлів: агент пише CI-скрипти і workflow сам за
+вимогами нижче та перевіряє їх локально і парсером YAML.
 
 ## Коли застосовувати
 - Проєкт складається і тестується локально (`npm run build`, `npm test` проходять).
@@ -17,50 +20,79 @@ description: Creates the CI entry scripts ci.sh / ci.bat and .github/workflows/c
 | `nodeVersion` | `24` | версія Node.js у CI (поточна LTS) |
 | `artifactName` | `hello-${{ matrix.os }}` | назва артефакту з виконуваними файлами |
 
-Шаблони: `.github/skills/github-actions/templates/` (`ci.sh`, `ci.bat`, `ci.yml`).
-
 ## Виходи
 | Файл | Призначення |
 |---|---|
-| `ci.sh` | Linux/macOS: `npm ci` → `npm run build` → `npm test` → запуск `build/hello` і перевірка виводу; режим 755, LF |
-| `ci.bat` | Windows: ті самі кроки через `call`, перевірка коду повернення після кожного; CRLF |
-| `.github/workflows/ci.yml` | одна job `build-and-test` з matrix трьох ОС |
+| `ci.sh` | CI для Linux/macOS |
+| `ci.bat` | CI для Windows |
+| `.github/workflows/ci.yml` | workflow GitHub Actions |
 
-Структура workflow (саме складання і тести — лише всередині `ci.sh` / `ci.bat`):
-1. `actions/checkout` — отримання коду;
-2. `actions/setup-node` — конфігурація середовища (Node.js + кеш npm);
-3. `bash ./ci.sh` (не Windows) або `call ci.bat` (Windows) — складання і тестування;
-4. `actions/upload-artifact` — збереження `build/` як артефакту `hello-<os>`.
+## Вимоги
+### Спільне для `ci.sh` і `ci.bat`
+Скрипт виконує повний цикл і зупиняється з ненульовим кодом на першій помилці:
+1. перейти в каталог, де лежить сам скрипт;
+2. надрукувати версію Node.js (і ОС);
+3. `npm ci --no-audit --no-fund` → `npm run build` → `npm test`;
+4. запустити зібраний виконуваний файл, надрукувати його вивід і перевірити, що
+   він **точно** дорівнює `Hello, World!`; інакше — повідомлення в stderr і код 1;
+5. якщо задано змінну `GITHUB_STEP_SUMMARY` — дописати в цей файл Markdown-підсумок:
+   заголовок `### <ОС>: build and tests passed`, версію Node.js і вивід програми;
+6. останній рядок виводу — `ci: OK`.
 
-Результат job зрозумілий: назва `build-and-test (<os>)`, `fail-fast: false` (видно
-результат кожної ОС), підсумок у `GITHUB_STEP_SUMMARY` і артефакт з `hello`.
-`permissions: contents: read`, жодних `secrets.*`.
+### `ci.sh`
+bash, `#!/usr/bin/env bash`, `set -euo pipefail`, перехід у каталог через
+`cd "$(dirname "$0")"`, запуск `./build/hello`. Кінці рядків LF, права 755.
+
+### `ci.bat`
+`@echo off`, `setlocal`, `cd /d "%~dp0"`. Кожен виклик `npm` — через `call`
+(інакше batch-файл завершиться після першого `npm`) з перевіркою коду
+повернення (`|| exit /b 1`). Вивід `build\hello.cmd` отримати через `for /f`.
+Кінці рядків CRLF (`.gitattributes`: `*.bat text eol=crlf`). Завершення — `exit /b 0`.
+
+### `.github/workflows/ci.yml`
+- `name: CI`; тригери `push` і `pull_request` на `branches`, а також `workflow_dispatch`;
+- `permissions: contents: read`, жодних `secrets.*`;
+- **одна** job `build-and-test` з назвою `build-and-test (${{ matrix.os }})`,
+  `runs-on: ${{ matrix.os }}`, `strategy.fail-fast: false`, `matrix.os` = `os`;
+- кроки, по порядку:
+  1. `actions/checkout` — отримання коду;
+  2. `actions/setup-node` — `node-version: nodeVersion`, `cache: npm`;
+  3. для не-Windows: `shell: bash`, `run: bash ./ci.sh` (через `bash`, щоб не залежати від біта виконання);
+  4. для Windows: `shell: cmd`, `run: call ci.bat`;
+  5. `actions/upload-artifact` — `name: artifactName`, `path: build/`,
+     `if-no-files-found: error`, `retention-days: 30`.
+- Складання і тести **лише** всередині `ci.sh` / `ci.bat`; інших кроків `run` немає.
+- Версії actions — **остання мажорна** версія на момент запуску, що працює на
+  Node.js 24. Визначити її: `gh api repos/actions/<name>/releases/latest --jq .tag_name`
+  (або сторінка Releases репозиторію `actions/<name>`), і перевірити в `action.yml`
+  цього релізу `runs.using: node24`. Версії з пам'яті моделі не використовувати.
 
 ## Кроки
 1. Переконатися, що `npm run build` і `npm test` проходять локально; інакше — зупинитися.
-2. Скопіювати `ci.sh` (встановити `chmod 755`), `ci.bat` (зберегти CRLF; `.gitattributes`
-   містить `*.bat text eol=crlf`).
-3. Скопіювати `ci.yml` у `.github/workflows/ci.yml`. Якщо файл існує — порівняти;
-   не створювати другий workflow і не дублювати job.
-4. Виконати перевірки.
+2. Визначити актуальні версії `actions/checkout`, `actions/setup-node`, `actions/upload-artifact`.
+3. Написати `ci.sh` (встановити `chmod 755`) і `ci.bat` за вимогами.
+4. Написати `.github/workflows/ci.yml`. Якщо файл існує — перевірити вимоги; не
+   створювати другий workflow і не дублювати job.
+5. Виконати перевірки.
 
 ## Перевірки
 ```bash
-./ci.sh                                    # локальний прогін CI-скрипту -> ci: OK
+./ci.sh                                    # локальний прогін -> останній рядок "ci: OK"
+file ci.sh ci.bat                          # ci.sh: ... executable; ci.bat: ... with CRLF line terminators
 node -e "require('js-yaml').load(require('fs').readFileSync('.github/workflows/ci.yml','utf8'))"
-grep -E "ubuntu-latest|windows-latest|macos-latest" .github/workflows/ci.yml
 grep -c "secrets\." .github/workflows/ci.yml   # -> 0
 node .github/agent-tools/check.js --static     # група workflow -> PASS
 ```
-Після push: вкладка **Actions** → три зелені job `build-and-test (…)`, артефакти `hello-*`.
+Після push: вкладка **Actions** → три зелені job `build-and-test (…)` без попереджень, артефакти `hello-*`.
 
 ## Типовий сценарій помилки
 | Симптом | Причина | Дія |
 |---|---|---|
 | `YAMLException: bad indentation` | змішані пробіли/таби, неправильний відступ | виправити відступи (2 пробіли), повторити перевірку парсером |
-| Windows job: `'ci.bat' is not recognized` / кроки після `npm` не виконуються | виклик `npm` без `call` завершує batch-файл | у `ci.bat` викликати `call npm …` |
+| Windows job: кроки після першого `npm` не виконуються | виклик `npm` без `call` | `call npm …` |
 | Linux job: `/usr/bin/env: 'bash\r'` | `ci.sh` збережено з CRLF | `.gitattributes`: `*.sh text eol=lf` |
-| `Permission denied: ./ci.sh` | файл без біта виконання | у workflow викликати `bash ./ci.sh` |
+| попередження `Node.js 20 is deprecated … actions/<name>@vN` | застаріла мажорна версія action | взяти останній реліз (див. вимоги), перевірити `runs.using: node24` |
+| push відхилено: `without workflow scope` | токен без scope `workflow` | користувач виконує `gh auth refresh -s workflow` |
 | workflow не запускається | гілка не входить до `branches` | додати `develop`/`master` до `push` і `pull_request` |
 
 ## Приклад
@@ -70,7 +102,8 @@ node .github/agent-tools/check.js --static     # група workflow -> PASS
 ```
 Очікуваний результат:
 ```text
-CREATED  ci.sh (755), ci.bat (CRLF)
+INFO     actions/checkout vX, actions/setup-node vY, actions/upload-artifact vZ (node24)
+CREATED  ci.sh (755, LF), ci.bat (CRLF)
 CREATED  .github/workflows/ci.yml (matrix: ubuntu-latest, windows-latest, macos-latest)
 PASS     ./ci.sh -> ci: OK
 PASS     check --static: workflow

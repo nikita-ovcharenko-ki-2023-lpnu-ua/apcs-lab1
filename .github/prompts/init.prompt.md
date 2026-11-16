@@ -36,7 +36,7 @@ description: Orchestrator - run git-init, create-project, create-build, create-a
   `git status --short` — без змін.
 
 ## Очікувані файли
-Усі файли з розділів «Очікувані файли» команд 1–4, а також запис у `docs/ai-log.md`.
+Усі файли з розділів «Очікувані файли» команд 1–4.
 
 ## Перевірки
 ```bash

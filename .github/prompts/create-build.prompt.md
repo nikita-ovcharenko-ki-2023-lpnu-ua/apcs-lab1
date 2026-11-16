@@ -14,11 +14,12 @@ argument-hint: projectName=hello-world-js testName=BasicAddition
 - Доступ до npm registry (`npm ping`).
 
 ## Дії
-1. Підкрок build-config: `package.json`, `jest.config.js`, `scripts/build.js`, `scripts/clean.js`.
+1. Підкрок build-config: отримати версії `jest`, `js-yaml` з реєстру; написати за вимогами
+   skill `package.json`, `jest.config.js`, `scripts/build.js`, `scripts/clean.js`.
 2. Підкрок test-function: `src/math.js`.
 3. Підкрок unit-tests: `tests/math.test.js`, `tests/hello.test.js`.
 4. `npm install --no-audit --no-fund` (або `npm ci`, якщо lock-файл уже існує і не змінювався).
-5. Оновити блок `agent:build` у `docs/usage.md`, дописати запис у `docs/ai-log.md`.
+5. Оновити блок `agent:build` у `docs/usage.md`.
 
 ## Очікувані файли
 - `package.json`, `package-lock.json`, `jest.config.js`
