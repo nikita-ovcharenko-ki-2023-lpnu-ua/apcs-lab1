@@ -14,6 +14,7 @@ Windows, Linux і macOS, а потім перевіряє результат.
 | Перевірка | [`.github/agent-tools/check.js`](.github/agent-tools/check.js) |
 | Архітектура | [`docs/architecture.md`](docs/architecture.md) |
 | Інструкція запуску | [`docs/usage.md`](docs/usage.md) |
+| Докази перевірки | [`docs/verification.md`](docs/verification.md) |
 
 ## Гілки
 - `develop` — лише агент з інструкціями;
