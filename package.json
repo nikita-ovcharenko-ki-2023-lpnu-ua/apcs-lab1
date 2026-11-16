@@ -1,0 +1,23 @@
+{
+  "name": "hello-world-js",
+  "version": "1.0.0",
+  "description": "Cross-platform Hello World console application in JavaScript, built with npm scripts and tested with Jest",
+  "private": true,
+  "license": "MIT",
+  "author": "nikita-ovcharenko-ki-2023-lpnu-ua",
+  "main": "src/hello.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "node scripts/build.js",
+    "start": "node build/hello",
+    "test": "jest --ci",
+    "check": "node .github/agent-tools/check.js",
+    "clean": "node scripts/clean.js"
+  },
+  "devDependencies": {
+    "jest": "^30.5.2",
+    "js-yaml": "^5.5.0"
+  }
+}
